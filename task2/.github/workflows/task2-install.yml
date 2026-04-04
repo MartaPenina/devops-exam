@@ -1,0 +1,46 @@
+# CI/CD pipeline for installing Kubernetes, Minikube and Helm on target VM using Ansible
+
+name: Task2 - Install
+
+on:
+  workflow_dispatch:
+    inputs:
+      node_ip:
+        description: 'IP address of the target VM'
+        required: true
+        default: '209.38.209.155'
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/devops-exam
+          chmod 600 ~/.ssh/devops-exam
+
+      - name: Create inventory file
+        run: |
+          echo "[nodes]" > task2/ansible/inventory.ini
+          echo "penina-node ansible_host=${{ github.event.inputs.node_ip }} ansible_user=root ansible_ssh_private_key_file=~/.ssh/devops-exam" >> task2/ansible/inventory.ini
+          echo "" >> task2/ansible/inventory.ini
+          echo "[nodes:vars]" >> task2/ansible/inventory.ini
+          echo "ansible_python_interpreter=/usr/bin/python3" >> task2/ansible/inventory.ini
+
+      - name: Ansible Check (validate without installing)
+        run: |
+          ansible-playbook -i task2/ansible/inventory.ini task2/ansible/playbook.yml --check
+        continue-on-error: false
+
+      - name: Ansible Apply (install components)
+        run: |
+          ansible-playbook -i task2/ansible/inventory.ini task2/ansible/playbook.yml
