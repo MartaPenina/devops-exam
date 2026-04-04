@@ -75,19 +75,16 @@ resource "digitalocean_firewall" "main" {
 }
 
 # Droplet (VM) - Ubuntu 24.04, 4vCPU/8GB RAM for Minikube/Kubernetes
-data "digitalocean_images" "ubuntu" {
-  filter {
-    key    = "distribution"
-    values = ["Ubuntu"]
-  }
-  filter {
-    key    = "name"
-    values = ["24.04"]
-  }
-  sort {
-    key       = "created"
-    direction = "desc"
-  }
+data "digitalocean_image" "ubuntu" {
+  slug = "ubuntu-24-04-x64"
+}
+
+resource "digitalocean_droplet" "main" {
+  name     = "${var.surname}-node"
+  region   = var.region
+  size     = var.droplet_size
+  image    = data.digitalocean_image.ubuntu.slug
+  vpc_uuid = digitalocean_vpc.main.id
 }
 
 resource "digitalocean_droplet" "main" {
