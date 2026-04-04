@@ -22,6 +22,50 @@
         state: present
         update_cache: yes
 
+    # Install Docker
+    - name: Install Docker dependencies
+      apt:
+        name:
+          - ca-certificates
+          - curl
+        state: present
+
+    - name: Add Docker GPG key
+      shell: |
+        install -m 0755 -d /etc/apt/keyrings
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+        chmod a+r /etc/apt/keyrings/docker.asc
+      args:
+        creates: /etc/apt/keyrings/docker.asc
+
+    - name: Add Docker repository
+      shell: |
+        echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu noble stable" > /etc/apt/sources.list.d/docker.list
+      args:
+        creates: /etc/apt/sources.list.d/docker.list
+
+    - name: Install Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: yes
+
+    - name: Start and enable Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    # Install crictl
+    - name: Download and install crictl
+      shell: |
+        curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.29.0/crictl-v1.29.0-linux-amd64.tar.gz | tar -xz -C /usr/local/bin/
+      args:
+        creates: /usr/local/bin/crictl
+
     # Install kubectl
     - name: Download kubectl binary
       get_url:
@@ -64,13 +108,13 @@
       changed_when: false
 
     # Start Minikube
-    - name: Start Minikube with none driver
-      command: minikube start --driver=none --force
+    - name: Start Minikube with docker driver
+      command: minikube start --driver=docker --force
       environment:
         MINIKUBE_WANTUPDATENOTIFICATION: "false"
       ignore_errors: yes
 
-    # Enable Minikube dashboard
+    # Enable Minikube addons
     - name: Enable Minikube dashboard addon
       command: minikube addons enable dashboard
       ignore_errors: yes
