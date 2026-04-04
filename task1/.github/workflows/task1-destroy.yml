@@ -1,0 +1,31 @@
+# Runs manually only. Destroys all infrastructure resources.
+
+name: Task1 - Destroy
+
+on:
+  workflow_dispatch:
+
+env:
+  TF_VAR_do_token: ${{ secrets.DO_TOKEN }}
+  TF_VAR_spaces_access_key: ${{ secrets.SPACES_ACCESS_KEY }}
+  TF_VAR_spaces_secret_key: ${{ secrets.SPACES_SECRET_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.SPACES_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: task1/terraform
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
