@@ -2,7 +2,7 @@
 
 terraform {
   backend "s3" {
-    endpoint = "fra1.digitaloceanspaces.com"
+    endpoint = "https://fra1.digitaloceanspaces.com"
     region   = "us-east-1"
     bucket   = "penina-tfstate"
     key      = "task1/terraform.tfstate"

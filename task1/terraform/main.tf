@@ -10,7 +10,9 @@ terraform {
 }
 
 provider "digitalocean" {
-  token = var.do_token
+  token             = var.do_token
+  spaces_access_id  = var.spaces_access_key
+  spaces_secret_key = var.spaces_secret_key
 }
 
 # VPC - isolated private network in Frankfurt region
@@ -97,4 +99,7 @@ resource "digitalocean_droplet" "main" {
 }
 
 # Bucket for object storage in the same region as VPC
-resource "digitaloce
+resource "digitalocean_spaces_bucket" "main" {
+  name   = "${var.surname}-bucket"
+  region = var.region
+}
