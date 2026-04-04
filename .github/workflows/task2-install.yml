@@ -27,6 +27,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/devops-exam
           chmod 600 ~/.ssh/devops-exam
+          ssh-keyscan -H ${{ github.event.inputs.node_ip }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
 
       - name: Create inventory file
         run: |
