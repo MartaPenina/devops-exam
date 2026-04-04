@@ -87,14 +87,6 @@ resource "digitalocean_droplet" "main" {
   vpc_uuid = digitalocean_vpc.main.id
 }
 
-resource "digitalocean_droplet" "main" {
-  name     = "${var.surname}-node"
-  region   = var.region
-  size     = var.droplet_size
-  image    = data.digitalocean_images.ubuntu.images[0].slug
-  vpc_uuid = digitalocean_vpc.main.id
-}
-
 # Bucket for object storage in the same region as VPC
 resource "digitalocean_spaces_bucket" "main" {
   name   = "${var.surname}-bucket"
