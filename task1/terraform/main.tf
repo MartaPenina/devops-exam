@@ -89,6 +89,6 @@ resource "digitalocean_droplet" "main" {
 
 # Bucket for object storage in the same region as VPC
 resource "digitalocean_spaces_bucket" "main" {
-  name   = "${var.surname}-bucket"
+  name   = "peninaa-bucket"
   region = var.region
 }
