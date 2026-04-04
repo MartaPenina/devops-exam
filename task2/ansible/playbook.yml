@@ -62,16 +62,17 @@
     # Install crictl
     - name: Download and install crictl
       shell: |
-        curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.29.0/crictl-v1.29.0-linux-amd64.tar.gz | tar -xz -C /usr/local/bin/
+        curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.35.0/crictl-v1.35.0-linux-amd64.tar.gz | tar -xz -C /usr/local/bin/
       args:
         creates: /usr/local/bin/crictl
 
     # Install kubectl
     - name: Download kubectl binary
       get_url:
-        url: https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl
+        url: https://dl.k8s.io/release/v1.35.0/bin/linux/amd64/kubectl
         dest: /usr/local/bin/kubectl
         mode: '0755'
+        force: yes
 
     - name: Verify kubectl installation
       command: kubectl version --client
