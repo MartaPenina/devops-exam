@@ -23,9 +23,11 @@ jobs:
           sudo apt-get install -y ansible
 
       - name: Setup SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/devops-exam
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/devops-exam
           chmod 600 ~/.ssh/devops-exam
           ssh-keyscan -H ${{ github.event.inputs.node_ip }} >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
