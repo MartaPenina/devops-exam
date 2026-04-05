@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # DevOps Exam Part 2 - Terraform, Ansible, Kubernetes CI/CD pipelines
 
 ## Repository Structure
@@ -15,8 +14,3 @@
 - Cluster: `penina-k8s` (DigitalOcean, Frankfurt)
 - DockerHub: `marrrta/hello-world`
 - Rollback: `helm rollback hello-world 1 -n dev`
-=======
-# devops-exam
-DevOps exam Part 2 - Terraform, Ansible, Kubernetes CI/CD pipelines
-# trigger
->>>>>>> develop
