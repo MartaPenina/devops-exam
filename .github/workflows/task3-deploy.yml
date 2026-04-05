@@ -69,7 +69,9 @@ jobs:
         run: |
           helm upgrade --install hello-world ./helm-charts-hello-world \
             -f ./helm-charts-hello-world/values-${{ needs.build-and-push.outputs.environment }}.yaml \
+            --set image.repository=${{ secrets.DOCKER_USERNAME }}/hello-world \
             --set image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+            --set image.pullPolicy=Always \
             --set service.port=${{ needs.build-and-push.outputs.port }} \
             --set serviceAccount.create=false \
             --set ingress.enabled=false \
