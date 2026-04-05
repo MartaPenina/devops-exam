@@ -12,6 +12,7 @@ jobs:
     outputs:
       image_tag: ${{ steps.vars.outputs.tag }}
       environment: ${{ steps.vars.outputs.env }}
+      port: ${{ steps.vars.outputs.port }}
 
     steps:
       - name: Checkout code
@@ -23,9 +24,11 @@ jobs:
           if [ "${{ github.ref_name }}" == "develop" ]; then
             echo "tag=develop" >> $GITHUB_OUTPUT
             echo "env=dev" >> $GITHUB_OUTPUT
+            echo "port=8002" >> $GITHUB_OUTPUT
           else
             echo "tag=1.0.0" >> $GITHUB_OUTPUT
             echo "env=prod" >> $GITHUB_OUTPUT
+            echo "port=8003" >> $GITHUB_OUTPUT
           fi
 
       - name: Login to DockerHub
@@ -67,5 +70,6 @@ jobs:
           helm upgrade --install hello-world ./helm-charts-hello-world \
             -f ./helm-charts-hello-world/values-${{ needs.build-and-push.outputs.environment }}.yaml \
             --set image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+            --set service.port=${{ needs.build-and-push.outputs.port }} \
             --set serviceAccount.create=false \
             --set ingress.enabled=false
