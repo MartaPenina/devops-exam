@@ -72,4 +72,6 @@ jobs:
             --set image.tag=${{ needs.build-and-push.outputs.image_tag }} \
             --set service.port=${{ needs.build-and-push.outputs.port }} \
             --set serviceAccount.create=false \
-            --set ingress.enabled=false
+            --set ingress.enabled=false \
+            --set httpRoute.enabled=false \
+            --set autoscaling.enabled=false
