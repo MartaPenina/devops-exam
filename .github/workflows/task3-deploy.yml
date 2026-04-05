@@ -13,6 +13,7 @@ jobs:
       image_tag: ${{ steps.vars.outputs.tag }}
       environment: ${{ steps.vars.outputs.env }}
       port: ${{ steps.vars.outputs.port }}
+      namespace: ${{ steps.vars.outputs.namespace }}
 
     steps:
       - name: Checkout code
@@ -25,10 +26,12 @@ jobs:
             echo "tag=develop" >> $GITHUB_OUTPUT
             echo "env=dev" >> $GITHUB_OUTPUT
             echo "port=8002" >> $GITHUB_OUTPUT
+            echo "namespace=dev" >> $GITHUB_OUTPUT
           else
             echo "tag=1.0.0" >> $GITHUB_OUTPUT
             echo "env=prod" >> $GITHUB_OUTPUT
             echo "port=8003" >> $GITHUB_OUTPUT
+            echo "namespace=release" >> $GITHUB_OUTPUT
           fi
 
       - name: Login to DockerHub
@@ -65,6 +68,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Helm dry-run validate
+        run: |
+          helm upgrade --install hello-world ./helm-charts-hello-world \
+            -f ./helm-charts-hello-world/values-${{ needs.build-and-push.outputs.environment }}.yaml \
+            --set image.repository=${{ secrets.DOCKER_USERNAME }}/hello-world \
+            --set image.tag=${{ needs.build-and-push.outputs.image_tag }} \
+            --set image.pullPolicy=Always \
+            --set service.port=${{ needs.build-and-push.outputs.port }} \
+            --set serviceAccount.create=false \
+            --set ingress.enabled=false \
+            --set httpRoute.enabled=false \
+            --set autoscaling.enabled=false \
+            --namespace ${{ needs.build-and-push.outputs.namespace }} \
+            --dry-run
+
       - name: Deploy with Helm
         run: |
           helm upgrade --install hello-world ./helm-charts-hello-world \
@@ -76,4 +94,5 @@ jobs:
             --set serviceAccount.create=false \
             --set ingress.enabled=false \
             --set httpRoute.enabled=false \
-            --set autoscaling.enabled=false
+            --set autoscaling.enabled=false \
+            --namespace ${{ needs.build-and-push.outputs.namespace }}
