@@ -67,4 +67,5 @@ jobs:
           helm upgrade --install hello-world ./helm-charts-hello-world \
             -f ./helm-charts-hello-world/values-${{ needs.build-and-push.outputs.environment }}.yaml \
             --set image.tag=${{ needs.build-and-push.outputs.image_tag }} \
-            --set serviceAccount.create=false
+            --set serviceAccount.create=false \
+            --set ingress.enabled=false
